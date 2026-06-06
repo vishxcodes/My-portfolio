@@ -12,7 +12,31 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors({ origin: /^http:\/\/localhost(:\d+)?$/, credentials: true }));
+const allowedOrigins = [
+  /^http:\/\/localhost(:\d+)?$/
+];
+if (process.env.FRONTEND_URL) {
+  if (process.env.FRONTEND_URL.includes(',')) {
+    allowedOrigins.push(...process.env.FRONTEND_URL.split(',').map(url => url.trim()));
+  } else {
+    allowedOrigins.push(process.env.FRONTEND_URL.trim());
+  }
+}
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const isAllowed = allowedOrigins.some((allowed) => {
+      if (allowed instanceof RegExp) return allowed.test(origin);
+      return allowed === origin;
+    });
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
