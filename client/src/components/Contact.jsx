@@ -31,7 +31,8 @@ export default function Contact() {
     }
     setStatus('loading');
     try {
-      await axios.post('/api/contact', form, { timeout: 5000 });
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      await axios.post(`${API_URL}/api/contact`, form, { timeout: 5000 });
       setStatus('success');
       setForm({ name: '', email: '', subject: '', message: '' });
     } catch (err) {

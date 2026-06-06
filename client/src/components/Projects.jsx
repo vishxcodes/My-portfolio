@@ -48,7 +48,8 @@ export default function Projects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get('/api/projects', { timeout: 3000 });
+        const API_URL = import.meta.env.VITE_API_URL || '';
+        const res = await axios.get(`${API_URL}/api/projects`, { timeout: 3000 });
         setProjects(res.data.data.length ? res.data.data : FALLBACK_PROJECTS);
       } catch {
         setProjects(FALLBACK_PROJECTS);
